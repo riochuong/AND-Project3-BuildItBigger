@@ -1,19 +1,29 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+
+import com.jokegce.JokeGenerator;
+
+import joketelling.jd.com.displayjokealib.JokeDisplayActivity;
+import timber.log.Timber;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private  JokeGenerator jokeGenerator;
+    private static final String JOKE_KEY = "joke_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Timber.v("On Create JokeBean Telling ");
+        jokeGenerator = JokeGenerator.getInstance();
     }
 
 
@@ -39,8 +49,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /* no pressing the button will trigger the async task*/
     public void tellJoke(View view) {
-        Toast.makeText(this, "derp", Toast.LENGTH_SHORT).show();
+        new GetJokeFromGCETask().execute(this);
+    }
+
+    public void displayJoke(String joke){
+        if (joke != null){
+            Intent intent = new Intent(this, JokeDisplayActivity.class);
+            intent.putExtra(JOKE_KEY, joke);
+            startActivity(intent);
+        }
     }
 
 

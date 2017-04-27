@@ -10,6 +10,7 @@ import android.view.View;
 import com.jokegce.JokeGenerator;
 import com.udacity.gradle.builditbigger.GetJokeFromGCETask;
 import com.udacity.gradle.builditbigger.R;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import joketelling.jd.com.displayjokealib.JokeDisplayActivity;
 import timber.log.Timber;
@@ -19,13 +20,15 @@ public class MainPaidActivity extends AppCompatActivity implements GetJokeFromGC
 
     private  JokeGenerator jokeGenerator;
     private static final String JOKE_KEY = "joke_key";
-
+    private AVLoadingIndicatorView mSpinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Timber.v("On Create JokeBean Telling ");
         jokeGenerator = JokeGenerator.getInstance();
+        mSpinner = (AVLoadingIndicatorView) findViewById(R.id.spinner);
+        mSpinner.hide();
     }
 
 
@@ -53,6 +56,7 @@ public class MainPaidActivity extends AppCompatActivity implements GetJokeFromGC
 
     /* no pressing the button will trigger the async task*/
     public void tellJoke(View view) {
+        mSpinner.show();
         new GetJokeFromGCETask().execute(this);
     }
 
@@ -68,5 +72,6 @@ public class MainPaidActivity extends AppCompatActivity implements GetJokeFromGC
     @Override
     public void onJokeFinishLoading(String s) {
           displayJoke(s);
+          mSpinner.hide();
     }
 }

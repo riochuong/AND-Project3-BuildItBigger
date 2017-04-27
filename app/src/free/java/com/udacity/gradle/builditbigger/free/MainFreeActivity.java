@@ -13,6 +13,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.jokegce.JokeGenerator;
 import com.udacity.gradle.builditbigger.GetJokeFromGCETask;
 import com.udacity.gradle.builditbigger.R;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import joketelling.jd.com.displayjokealib.JokeDisplayActivity;
 import timber.log.Timber;
@@ -25,7 +26,7 @@ public class MainFreeActivity extends AppCompatActivity implements GetJokeFromGC
     private InterstitialAd mInterAd;
     private String mCurrentJoke = null;
     private boolean isAdClose = true;
-
+    private AVLoadingIndicatorView mSpinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +34,8 @@ public class MainFreeActivity extends AppCompatActivity implements GetJokeFromGC
         Timber.v("On Create JokeBean Telling ");
         jokeGenerator = JokeGenerator.getInstance();
         initializeInterAd();
+        mSpinner = (AVLoadingIndicatorView) findViewById(R.id.spinner);
+        mSpinner.hide();
     }
 
     private void initializeInterAd (){
@@ -78,6 +81,8 @@ public class MainFreeActivity extends AppCompatActivity implements GetJokeFromGC
         // reset string to null
         mCurrentJoke = null;
         isAdClose = true;
+        mSpinner.show();
+        mSpinner.setVisibility(View.VISIBLE);
         new GetJokeFromGCETask().execute(this);
         // display ad here
         if (mInterAd.isLoaded()){
@@ -98,6 +103,7 @@ public class MainFreeActivity extends AppCompatActivity implements GetJokeFromGC
     @Override
     public void onJokeFinishLoading(String s) {
         mCurrentJoke = s;
+        mSpinner.hide();
         // only call display joke if ad already closed
         if (mInterAd.isLoading() || isAdClose){
             displayJoke(mCurrentJoke);

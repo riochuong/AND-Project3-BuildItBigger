@@ -29,6 +29,10 @@ public class MyEndpoint {
 
     private static JokeGenerator jokeGenerator = JokeGenerator.getInstance();
 
+    /**
+     * provided api for getting random joke
+     * @return
+     */
     @ApiMethod(name = "getRandomJoke")
     public JokeBean getRandomJoke(){
         JokeBean bean = new JokeBean();

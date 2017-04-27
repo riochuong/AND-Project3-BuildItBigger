@@ -59,6 +59,7 @@ public class GetJokeFromGCETask extends AsyncTask<Context, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
+         Timber.v("OnPostExecute: Display Joke through Android Library");
         ((MainActivity)context).displayJoke(s);
     }
 }

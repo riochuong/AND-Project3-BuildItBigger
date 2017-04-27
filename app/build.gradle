@@ -37,6 +37,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.0.0'
     freeCompile 'com.google.android.gms:play-services-ads:9.8.0'
+    freeCompile 'com.google.firebase:firebase-ads:10.2.1'
     compile 'com.jakewharton.timber:timber:4.5.1'
     compile project (':joketellinglib')
     compile project (':displayjokealib')

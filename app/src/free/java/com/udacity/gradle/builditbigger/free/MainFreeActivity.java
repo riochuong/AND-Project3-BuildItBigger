@@ -1,4 +1,4 @@
-package com.udacity.gradle.builditbigger;
+package com.udacity.gradle.builditbigger.free;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,16 +7,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.jokegce.JokeGenerator;
+import com.udacity.gradle.builditbigger.GetJokeFromGCETask;
+import com.udacity.gradle.builditbigger.R;
 
 import joketelling.jd.com.displayjokealib.JokeDisplayActivity;
 import timber.log.Timber;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainFreeActivity extends AppCompatActivity implements GetJokeFromGCETask.JokeTaskCallBack {
 
     private  JokeGenerator jokeGenerator;
     private static final String JOKE_KEY = "joke_key";
+    private InterstitialAd mInterAd;
+    private String mCurrentJoke = null;
+    private boolean isAdClose = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +32,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Timber.v("On Create JokeBean Telling ");
         jokeGenerator = JokeGenerator.getInstance();
+        initializeInterAd();
+    }
+
+    private void initializeInterAd (){
+        // initialize interstitial ad
+        mInterAd = new InterstitialAd(this);
+        mInterAd.setAdUnitId(getString(R.string.ad_id));
+        mInterAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterAd();
+                isAdClose = true;
+                displayJoke(mCurrentJoke);
+            }
+        });
+        requestNewInterAd();
     }
 
 
@@ -51,7 +75,15 @@ public class MainActivity extends AppCompatActivity {
 
     /* no pressing the button will trigger the async task*/
     public void tellJoke(View view) {
+        // reset string to null
+        mCurrentJoke = null;
+        isAdClose = true;
         new GetJokeFromGCETask().execute(this);
+        // display ad here
+        if (mInterAd.isLoaded()){
+            mInterAd.show();
+            isAdClose = false;
+        }
     }
 
     public void displayJoke(String joke){
@@ -63,4 +95,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onJokeFinishLoading(String s) {
+        mCurrentJoke = s;
+        // only call display joke if ad already closed
+        if (mInterAd.isLoading() || isAdClose){
+            displayJoke(mCurrentJoke);
+        }
+    }
+
+    /**
+     * request new ad to be loaded
+     */
+    private void requestNewInterAd(){
+        AdRequest req = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mInterAd.loadAd(req);
+    }
 }

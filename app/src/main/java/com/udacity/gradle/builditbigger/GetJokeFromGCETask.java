@@ -22,6 +22,12 @@ import timber.log.Timber;
 public class GetJokeFromGCETask extends AsyncTask<Context, Void, String> {
     private static JokeGeneratorApi jokeGeneratorApiService = null;
     private Context context = null;
+
+    public interface JokeTaskCallBack {
+        void onJokeFinishLoading(String joke);
+    }
+
+
     @Override
     protected String doInBackground(Context... params) {
          // initialize service here
@@ -60,6 +66,13 @@ public class GetJokeFromGCETask extends AsyncTask<Context, Void, String> {
     @Override
     protected void onPostExecute(String s) {
          Timber.v("OnPostExecute: Display Joke through Android Library");
-        ((MainActivity)context).displayJoke(s);
+         try{
+             JokeTaskCallBack callBack = (JokeTaskCallBack) context;
+             callBack.onJokeFinishLoading(s);
+         } catch (ClassCastException e){
+             e.printStackTrace();
+             Timber.e("Main activity must implement JokeTaskCallBack ");
+         }
+
     }
 }

@@ -2,13 +2,11 @@ package builditbigger.android.test;
 
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.text.GetChars;
 
 import com.udacity.gradle.builditbigger.GetJokeFromGCETask;
-import com.udacity.gradle.builditbigger.MainActivity;
+import com.udacity.gradle.builditbigger.paid.MainPaidActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,8 +24,11 @@ import static org.junit.Assert.assertTrue;
 public class AsyncTaskStringRetrievalTest  {
     private static final int TIME_WAIT_SEC = 10;
 
+    /*
+     Use Paid activity for testing as it's simpler
+    * */
     @Rule
-    public ActivityTestRule<MainActivity> mainActivityRule = new ActivityTestRule<MainActivity>(MainActivity.class);
+    public ActivityTestRule<MainPaidActivity> mainActivityRule = new ActivityTestRule<MainPaidActivity>(MainPaidActivity.class);
 
     @Test
     public void testRetreiveStringJoke() throws InterruptedException {
